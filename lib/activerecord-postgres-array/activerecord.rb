@@ -40,6 +40,9 @@ module ActiveRecord
       # Quotes a value for use in an SQL statement
       def quote_with_array(value, column = nil)
         if value && column && column.sql_type =~ /\[\]$/
+          if column.type == :"integer[]"
+            return "array[]::integer[]"
+          end
           raise ArrayTypeMismatch, "#{column.name} must be an Array or have a valid array value (#{value})" unless value.kind_of?(Array) || value.valid_postgres_array?
           return value.to_postgres_array
         end
